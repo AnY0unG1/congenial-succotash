@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "io.github.anyoung1.servercore.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "ServerGamePacketListenerImplMixin",
+    "ItemEntityMixin",
+    "ServerPlayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

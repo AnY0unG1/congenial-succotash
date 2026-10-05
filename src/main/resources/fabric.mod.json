@@ -14,6 +14,9 @@
 			"io.github.anyoung1.servercore.ServerCore"
 		]
 	},
+	"mixins": [
+		"server-core.mixins.json"
+	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
 		"minecraft": "~26.3",
