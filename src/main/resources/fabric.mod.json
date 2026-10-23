@@ -8,14 +8,13 @@
 		"AnY0unG1"
 	],
 	"license": "CC0-1.0",
-	"environment": "server",
+	"environment": "*",
 	"entrypoints": {
-		"server": [
-			"io.github.anyoung1.servercore.ServerCore"
-		]
+		"server": ["io.github.anyoung1.servercore.music.MusicMod", "io.github.anyoung1.servercore.ServerCore"],
+		"client": ["io.github.anyoung1.servercore.music.client.MusicClient"]
 	},
 	"mixins": [
-		"server-core.mixins.json"
+		{"config": "server-core.mixins.json", "environment": "server"}
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
