@@ -3,14 +3,15 @@
 	"id": "server-core",
 	"version": "${version}",
 	"name": "Server Core",
-	"description": "A server-side Fabric mod for Minecraft servers.",
+	"description": "服务器登录保护与网易云共享唱片机。支持全服共享账号、扫码登录、歌单、同步播放控制及自定义背景。更新日志见模组内 CHANGELOG.md。",
 	"authors": [
 		"AnY0unG1"
 	],
 	"license": "CC0-1.0",
 	"environment": "*",
 	"entrypoints": {
-		"server": ["io.github.anyoung1.servercore.music.MusicMod", "io.github.anyoung1.servercore.ServerCore"],
+		"main": ["io.github.anyoung1.servercore.music.MusicMod"],
+		"server": ["io.github.anyoung1.servercore.ServerCore"],
 		"client": ["io.github.anyoung1.servercore.music.client.MusicClient"]
 	},
 	"mixins": [

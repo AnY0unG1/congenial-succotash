@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
 	implementation include('javazoom:jlayer:1.0.1')
+	implementation include('com.google.zxing:core:3.5.4')
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
@@ -49,12 +50,14 @@ java {
 tasks.register('musicApiTest', JavaExec) {
 	dependsOn testClasses
 	classpath = sourceSets.test.runtimeClasspath
-	mainClass = 'io.github.anyoung1.servercore.music.client.CloudApiTest'
+	mainClass = 'io.github.anyoung1.servercore.music.api.CloudApiTest'
 }
 tasks.named('test') { failOnNoDiscoveredTests = false }
 tasks.named('check') { dependsOn 'musicApiTest' }
 
 jar {
+	// 将更新日志与第三方依赖说明放入模组 JAR，便于随版本分发。
+	from('CHANGELOG.md', 'THIRD_PARTY_NOTICES.md')
 	def projectName = project.name
 	inputs.property "projectName", projectName
 

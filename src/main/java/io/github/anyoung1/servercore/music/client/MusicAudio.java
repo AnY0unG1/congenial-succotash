@@ -1,13 +1,14 @@
 package io.github.anyoung1.servercore.music.client;
 
 import io.github.anyoung1.servercore.music.MusicPacket;
+import io.github.anyoung1.servercore.music.api.CloudApi;
 import javazoom.jl.decoder.*;
 import javax.sound.sampled.*;
 import java.io.*;
 import java.net.*;
 import java.util.function.Consumer;
 
-/** Decoding and network I/O never run on the render thread. */
+/** 音源下载和 MP3 解码均在后台执行，渲染线程仅更新播放状态和音量。 */
 public final class MusicAudio {
     private volatile Session current;
     private volatile float volume;
@@ -23,7 +24,7 @@ public final class MusicAudio {
         if (s == null) return;
         s.cancelled = true;
         if (s.thread != null) s.thread.interrupt();
-        // Closing a network stream can block, so keep cleanup off the game thread too.
+        // 关闭网络流也可能阻塞，因此音频清理同样放到后台线程。
         Thread.startVirtualThread(() -> {
             if (s.line != null) { s.line.stop(); s.line.flush(); s.line.close(); }
             if (s.connection != null) s.connection.disconnect();
@@ -37,10 +38,8 @@ public final class MusicAudio {
             try {
                 URI url = api.songUrl(packet.song());
                 if (s.cancelled) return;
-                HttpURLConnection connection = (HttpURLConnection) url.toURL().openConnection();
+                HttpURLConnection connection = CloudApi.openAudio(url);
                 s.connection = connection;
-                connection.setConnectTimeout(10000); connection.setReadTimeout(15000);
-                connection.setInstanceFollowRedirects(false);
                 byte[] data;
                 try {
                     if (connection.getResponseCode() != 200) throw new IOException("音源下载失败");
@@ -67,6 +66,7 @@ public final class MusicAudio {
                         int count = samples.getBufferLength();
                         double frameMs = 1000.0 * count / samples.getChannelCount() / samples.getSampleFrequency();
                         decodedMs += frameMs;
+                        // 解码到服务器当前进度，补偿下载耗时，供新加入和暂停恢复时对齐。
                         if (!caughtUp && decodedMs < packet.elapsedMs() + (System.nanoTime() - received) / 1_000_000.0) continue;
                         if (!caughtUp) {
                             AudioFormat format = new AudioFormat(samples.getSampleFrequency(), 16, samples.getChannelCount(), true, false);
